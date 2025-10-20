@@ -186,16 +186,16 @@ build_exclude_list() {
         excludes="$excludes --exclude='p2p'"
         excludes="$excludes --exclude='logs'"
         excludes="$excludes --exclude='mempool'"
-        log_info "Seed-only mode: Backing up only block_store, chain, and config.yml"
+        log_info "Seed-only mode: Backing up only block_store, chain, and config.yml" >&2
     else
         if [ "$EXCLUDE_LOGS" = true ]; then
             excludes="$excludes --exclude='logs'"
-            log_info "Excluding logs directory"
+            log_info "Excluding logs directory" >&2
         fi
         
         if [ "$EXCLUDE_MEMPOOL" = true ]; then
             excludes="$excludes --exclude='mempool'"
-            log_info "Excluding mempool directory"
+            log_info "Excluding mempool directory" >&2
         fi
     fi
     
