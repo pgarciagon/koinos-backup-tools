@@ -231,16 +231,17 @@ create_backup() {
     # Create the backup with progress indicator
     log_info "Creating compressed archive..."
     
-    eval tar -czf "$full_backup_path" \
-        --use-compress-program="gzip -${COMPRESSION_LEVEL}" \
+    # Use pipe to gzip for better compatibility across different tar implementations
+    eval tar -cf - \
         -C "$(dirname "$DATA_DIR")" \
         $exclude_opts \
         --exclude='grpc' \
         --exclude='jsonrpc' \
         --exclude='block_producer' \
-        "$(basename "$DATA_DIR")"
+        "$(basename "$DATA_DIR")" \
+        | gzip -${COMPRESSION_LEVEL} > "$full_backup_path"
     
-    if [ $? -eq 0 ]; then
+    if [ ${PIPESTATUS[0]} -eq 0 ] && [ ${PIPESTATUS[1]} -eq 0 ]; then
         local backup_size=$(du -sh "$full_backup_path" | cut -f1)
         log_info "Backup created successfully!"
         log_info "Backup file: $full_backup_path"
